@@ -5,11 +5,6 @@ const test = ref(false)
 
 <template>
   <div class="columns is-multiline">
-    <!-- Welcome message (This will be a component) -->
-    <div class="column is-12 mt-5 mb-6">
-      <div class="notification title is-size-5 is-primary">Bienvenid@ David P. Avila</div>
-    </div>
-
     <!-- Buttons -->
     <div class="column is-5">
       <VDatePicker v-model="range" is-range :masks="{ input: 'DD/MM/YYYY' }">

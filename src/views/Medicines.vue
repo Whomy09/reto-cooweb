@@ -1,10 +1,10 @@
+<script lang="ts" setup>
+import Navegation from '@/components/layout/Navegation.vue';
+</script>
+
 <template>
   <div class="columns is-multiline">
-    <!-- Welcome message (This will be a component) -->
-    <div class="column is-12 mt-5 mb-5">
-      <div class="notification title is-size-5 is-primary">Bienvenid@ David P. Avila</div>
-    </div>
-
+    <Navegation/>
     <!-- Buttons -->
     <div class="column is-12 has-text-right">
       <button class="button is-primary">
