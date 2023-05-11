@@ -1,4 +1,5 @@
 import { DB } from '@/firebase/firebase'
+import type Medicine from '@/interfaces/Medicine'
 
 export const useFirestore = () => {
   const getReference = (type: 'collection' | 'document', path: string) => {
@@ -26,13 +27,32 @@ export const useFirestore = () => {
   }
 
   const addDocument = async (path: string, document: Record<string, any>) => {
-    const reference = getReference('collection', path);
-    return await reference.add(document);
+    const reference = getReference('collection', path)
+    return await reference.add(document)
+  }
+
+  const deleteDocument = async (path: string, type: 'Medicine' | 'MedicalOrders', name: string) => {
+    const reference = getReference('collection', path)
+
+    if (type === 'Medicine') {
+      const querySnapshot = await reference.where('name', '==', name).get()
+
+      querySnapshot.forEach(async (doc: any) => {
+        await reference.doc(doc.id).delete()
+      })
+    } else if (type === 'MedicalOrders') {
+      const querySnapshot = await reference.where('name', '==', name).get()
+
+      querySnapshot.forEach(async (doc: any) => {
+        await reference.doc(doc.id).delete()
+      })
+    }
   }
 
   return {
     getReference,
     getCollection,
-    addDocument
+    addDocument,
+    deleteDocument
   }
 }

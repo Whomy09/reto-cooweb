@@ -7,12 +7,11 @@ export default defineComponent({
   props: {
     isOpen: { type: Boolean, required: true }
   },
-  emits: ['hide'],
+  emits: ['hide', 'save'],
   setup(props, { emit }) {
 
     let isLoading = ref(false)
     let error = ref(false);
-    let success = ref(false);
 
     const formData = ref({
       name: '',
@@ -28,10 +27,14 @@ export default defineComponent({
     const handleSubmit = () => {
       const result = validationMedicineForm(formData.value);
       if (result) {
-        success.value = true;
-        setTimeout(() => {
-          success.value = false;
-        }, 2000);
+        formData.value.createdAt = new Date().toISOString();
+        emit('save', JSON.stringify(formData.value))
+        emit('hide')
+        formData.value.name = '';
+        formData.value.description = '';
+        formData.value.qty = 0;
+        formData.value.doctorSignature = '';
+        formData.value.provider = '';
       } else {
         error.value = true;
         setTimeout(() => {
@@ -40,7 +43,7 @@ export default defineComponent({
       }
     }
 
-    return { emit, isLoading, isModalOpen, handleSubmit, formData, error, success }
+    return { emit, isLoading, isModalOpen, handleSubmit, formData, error }
   }
 })
 </script>
@@ -99,9 +102,6 @@ export default defineComponent({
           </button>
           <div class="notification is-danger mt-4" v-if="error">
             {{ "Todos los campos deben de estar llenos" }}
-          </div>
-          <div class="notification is-success mt-4" v-if="success">
-            {{ "Se agrego correctamente" }}
           </div>
         </div>
       </div>
