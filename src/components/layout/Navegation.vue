@@ -3,7 +3,7 @@
     <nav class="navbar mb-6" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <router-link class="navbar-item" to="/">
-          <h3 class="title is-3">MyApp</h3>
+          <h3 class="title is-3">Medical Orders</h3>
         </router-link>
         <a
           role="button"
@@ -72,31 +72,4 @@ export default {
 }
 </script>
 
-<!-- <script lang="ts" setup>
-import firebase from 'firebase'
-import { useRouter } from 'vue-router'
-import { onBeforeMount } from 'vue'
-
-const router = useRouter()
-let userr: any = null
-
-const logout = () => {
-  firebase
-    .auth()
-    .signOut()
-    .then(() => {
-      router.push({ name: 'login' })
-    })
-}
-
-onBeforeMount(() => {
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      userr = user
-    } else {
-      userr = null
-    }
-  })
-})
-</script> -->
 <style scoped></style>
