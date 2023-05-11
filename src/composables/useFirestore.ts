@@ -41,7 +41,7 @@ export const useFirestore = () => {
         await reference.doc(doc.id).delete()
       })
     } else if (type === 'MedicalOrders') {
-      const querySnapshot = await reference.where('name', '==', name).get()
+      const querySnapshot = await reference.where('idNumber', '==', name).get()
 
       querySnapshot.forEach(async (doc: any) => {
         await reference.doc(doc.id).delete()

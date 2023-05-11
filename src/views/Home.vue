@@ -7,10 +7,11 @@ import { ref } from 'vue'
 import type BaseColumn from '@/interfaces/BaseColumn'
 import type MedicalOrder from '@/interfaces/MedicalOrder'
 
-const { getCollection, addDocument } = useFirestore()
+const { getCollection, addDocument, deleteDocument } = useFirestore()
 
 const isModalOpen = ref(false)
-
+const nameDelete = ref<string>('')
+let errorDelate = ref(false)
 const range = ref({
   start: null,
   end: null
@@ -44,20 +45,32 @@ const colums = ref<BaseColumn[]>([
   {
     field: 'medicines',
     label: 'Medicamentes'
-  },
-  
+  }
 ])
 
 const rows = ref<MedicalOrder[]>([])
 
 const getRecords = async () => {
   const response: MedicalOrder[] = await getCollection('Medical-Orders')
-  rows.value = response;
+  rows.value = response
+}
+
+const eliminar = async () => {
+  if (nameDelete.value) {
+    const response = await deleteDocument('Medical-Orders', 'MedicalOrders', nameDelete.value)
+    getRecords()
+    nameDelete.value = ''
+  } else {
+    errorDelate.value = true
+    setTimeout(() => {
+      errorDelate.value = false
+    }, 2000)
+  }
 }
 
 const handleSubmit = async (document: string) => {
-  const response = await addDocument('Medical-Orders', JSON.parse(document) as MedicalOrder);
-  getRecords();
+  const response = await addDocument('Medical-Orders', JSON.parse(document) as MedicalOrder)
+  getRecords()
 }
 getRecords()
 </script>
@@ -90,9 +103,25 @@ getRecords()
       </VDatePicker>
     </div>
     <div class="column is-7 has-text-right">
-      <button class="button is-primary" @click="isModalOpen = true">
-        <span class="icon mr-1"> <i class="fa fa-plus"></i> </span> Agregar
-      </button>
+      <div class="is-flex is-justify-content-flex-end is-align-items-center">
+        <div class="control mr-4" v-if="errorDelate">
+          <span class="has-text-danger">{{ 'Debes de colocar un nombre' }}</span>
+        </div>
+        <div class="control">
+          <input
+            class="input is-one-third"
+            type="text"
+            placeholder="Identification delete"
+            v-model="nameDelete"
+          />
+        </div>
+        <button class="button is-danger mr-4 ml-4" @click="eliminar">
+          <span class="icon mr-1"> <i class="fa fa-plus"></i> </span> Eliminar
+        </button>
+        <button class="button is-primary" @click="isModalOpen = true">
+          <span class="icon mr-1"> <i class="fa fa-plus"></i> </span> Agregar
+        </button>
+      </div>
     </div>
 
     <div class="column is-12">
