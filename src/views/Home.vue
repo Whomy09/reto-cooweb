@@ -19,11 +19,11 @@ const range = ref({
 const colums = ref<BaseColumn[]>([
   {
     field: 'name',
-    label: 'Name'
+    label: 'name'
   },
   {
-    field: 'lastname',
-    label: 'LastName'
+    field: 'lastName',
+    label: 'lastName'
   },
   {
     field: 'idNumber',
@@ -34,7 +34,7 @@ const colums = ref<BaseColumn[]>([
     label: 'EPS'
   },
   {
-    field: 'comments',
+    field: 'comentarios',
     label: 'comment'
   },
   {
