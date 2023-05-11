@@ -1,54 +1,21 @@
 <script setup lang="ts">
+import { useFirestore } from '@/composables/useFirestore'
+import { ref } from 'vue'
 import CustomTable from '@/components/shared/CustomTable.vue'
 import MedicalOrderModal from '@/components/medical-orders/MedicalOrderModal.vue'
-import { useFirestore } from '@/composables/useFirestore'
-
-import { ref } from 'vue'
-import type BaseColumn from '@/interfaces/BaseColumn'
+import headerTableOrders from '@/helpers/headerTableOrders'
 import type MedicalOrder from '@/interfaces/MedicalOrder'
 
 const { getCollection, addDocument, deleteDocument } = useFirestore()
-
-const isModalOpen = ref(false)
+const colums = headerTableOrders();
 const nameDelete = ref<string>('')
-let errorDelate = ref(false)
+const rows = ref<MedicalOrder[]>([])
 const range = ref({
   start: null,
   end: null
 })
-
-const colums = ref<BaseColumn[]>([
-  {
-    field: 'name',
-    label: 'name'
-  },
-  {
-    field: 'lastName',
-    label: 'lastName'
-  },
-  {
-    field: 'idNumber',
-    label: 'Identification'
-  },
-  {
-    field: 'eps',
-    label: 'EPS'
-  },
-  {
-    field: 'comentarios',
-    label: 'comment'
-  },
-  {
-    field: 'doctorSignature',
-    label: 'doctorSignature'
-  },
-  {
-    field: 'medicines',
-    label: 'Medicamentes'
-  }
-])
-
-const rows = ref<MedicalOrder[]>([])
+const isModalOpen = ref(false)
+let errorDelate = ref(false)
 
 const getRecords = async () => {
   const response: MedicalOrder[] = await getCollection('Medical-Orders')
@@ -72,7 +39,9 @@ const handleSubmit = async (document: string) => {
   const response = await addDocument('Medical-Orders', JSON.parse(document) as MedicalOrder)
   getRecords()
 }
+
 getRecords()
+
 </script>
 
 <template>
