@@ -129,12 +129,12 @@ export default defineComponent({
   background-color: white;
   height: 650px;
   width: 700px;
-  margin-top: 10%;
+  margin-top: 4%;
   padding: 40px 0;
   border-radius: 10px;
 }
 .close {
-  margin: 10.5% 0 0 -25px;
+  margin: 4.5% 0 0 -30px;
   cursor: pointer;
 }
 </style>

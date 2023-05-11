@@ -4,6 +4,7 @@ import MedicinesVue from '../views/Medicines.vue'
 import Login from '../views/Auth/Login.vue'
 import Register from '../views/Auth/Register.vue'
 import firebase from 'firebase'
+import GraficaView from '../views/GraficaView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,6 +21,14 @@ const router = createRouter({
       path: '/medicamentos',
       name: 'medicines',
       component: MedicinesVue,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/grafica',
+      name: 'grafica',
+      component: GraficaView,
       meta: {
         requiresAuth: true
       }

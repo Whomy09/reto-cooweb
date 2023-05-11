@@ -28,6 +28,7 @@
                 <div class="navbar-dropdown">
                   <router-link to="/" class="navbar-item"> Orders </router-link>
                   <router-link to="/medicamentos" class="navbar-item"> Medicines </router-link>
+                  <router-link to="/grafica" class="navbar-item"> Grafica </router-link>
                   <a class="navbar-item" @click.prevent="logout"> Cerrar sesion </a>
                 </div>
               </div>
