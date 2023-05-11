@@ -1,17 +1,65 @@
 <script setup lang="ts">
-
 import CustomTable from '@/components/shared/CustomTable.vue'
-import MedicalOrderModal from '@/components/medical-orders/MedicalOrderModal.vue';
+import MedicalOrderModal from '@/components/medical-orders/MedicalOrderModal.vue'
+import { useFirestore } from '@/composables/useFirestore'
 
 import { ref } from 'vue'
+import type BaseColumn from '@/interfaces/BaseColumn'
+import type MedicalOrder from '@/interfaces/MedicalOrder'
+
+const { getCollection, addDocument } = useFirestore()
 
 const isModalOpen = ref(false)
 
 const range = ref({
   start: null,
   end: null
-});
+})
 
+const colums = ref<BaseColumn[]>([
+  {
+    field: 'name',
+    label: 'Name'
+  },
+  {
+    field: 'lastname',
+    label: 'LastName'
+  },
+  {
+    field: 'idNumber',
+    label: 'Identification'
+  },
+  {
+    field: 'eps',
+    label: 'EPS'
+  },
+  {
+    field: 'comments',
+    label: 'comment'
+  },
+  {
+    field: 'doctorSignature',
+    label: 'doctorSignature'
+  },
+  {
+    field: 'medicines',
+    label: 'Medicamentes'
+  },
+  
+])
+
+const rows = ref<MedicalOrder[]>([])
+
+const getRecords = async () => {
+  const response: MedicalOrder[] = await getCollection('Medical-Orders')
+  rows.value = response;
+}
+
+const handleSubmit = async (document: string) => {
+  const response = await addDocument('Medical-Orders', JSON.parse(document) as MedicalOrder);
+  getRecords();
+}
+getRecords()
 </script>
 
 <template>
@@ -48,13 +96,11 @@ const range = ref({
     </div>
 
     <div class="column is-12">
-      <CustomTable :cols="[]" :rows="[]" />
+      <CustomTable :cols="colums" :rows="rows" />
     </div>
 
-    <MedicalOrderModal :is-open="isModalOpen" @hide="isModalOpen = false"/>
+    <MedicalOrderModal :is-open="isModalOpen" @hide="isModalOpen = false" @save="handleSubmit" />
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

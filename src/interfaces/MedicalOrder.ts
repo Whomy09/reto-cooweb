@@ -5,9 +5,10 @@ interface MedicalOrder {
   lastName: string,
   idNumber: string,
   eps: string,
-  medicines: Medicine[],
+  medicines: string[],
   doctorSignature: string,
+  comentarios: string,
   createdAt?: string
 }
 
-export default MedicalOrder;
+export default MedicalOrder

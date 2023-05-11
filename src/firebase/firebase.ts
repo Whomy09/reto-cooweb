@@ -2,17 +2,17 @@ import firebase from 'firebase'
 import 'firebase/firestore'
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAqyXwZicBbjEWbkhwoMsrHoXlNPbbIsNU',
-  authDomain: 'reto-cooweb.firebaseapp.com',
-  projectId: 'reto-cooweb',
-  storageBucket: 'reto-cooweb.appspot.com',
-  messagingSenderId: '726007358054',
-  appId: '1:726007358054:web:6d69e4121115bb3dd283a7',
-  measurementId: 'G-BQV6JQFSLF'
+  apiKey: import.meta.env.VITE_API_FIREBASE_APIKEY,
+  authDomain: import.meta.env.VITE_API_FIREBASE_EAUTHDONAIN,
+  projectId: import.meta.env.VITE_API_FIREBASE_PROJECTID,
+  storageBucket: import.meta.env.VITE_API_FIREBASE_STORAGEBUCKET,
+  messagingSenderId: import.meta.env.VITE_API_FIREBASE_MESSAGINGSENDERID,
+  appId: import.meta.env.VITE_API_FIREBASE_APPID,
+  measurementId: import.meta.env.VITE_API_FIREBASE_MEASUREMENTID
 }
 
-const firebaseApp = firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig)
 
-const DB = firebase.firestore();
+const DB = firebase.firestore()
 
 export { DB }

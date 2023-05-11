@@ -9,7 +9,7 @@
           <div class="field">
             <label class="has-text-grey has-text-weight-light">Nombres del paciente</label>
             <div class="control">
-              <input class="input" type="text" />
+              <input class="input" type="text" v-model="order.name" />
             </div>
           </div>
         </div>
@@ -17,7 +17,7 @@
           <div class="field">
             <label class="has-text-grey has-text-weight-light">Apellidos del paciente</label>
             <div class="control">
-              <input class="input" type="text" />
+              <input class="input" type="text" v-model="order.lastName" />
             </div>
           </div>
         </div>
@@ -25,7 +25,7 @@
           <div class="field">
             <label class="has-text-grey has-text-weight-light">Cedula</label>
             <div class="control">
-              <input class="input" type="text" />
+              <input class="input" type="text" v-model="order.idNumber" />
             </div>
           </div>
         </div>
@@ -34,7 +34,7 @@
             <label class="has-text-grey has-text-weight-light">EPS</label>
             <div class="control has-icons-left">
               <div class="select is-fullwidth">
-                <select>
+                <select v-model="order.eps">
                   <option selected>Seleccione una opción</option>
                   <option>SURA</option>
                   <option>PONAL</option>
@@ -57,11 +57,11 @@
             <label class="has-text-grey has-text-weight-light">Medicamento</label>
             <div class="control has-icons-left">
               <div class="select is-fullwidth">
-                <select>
-                  <option selected>Seleccione una opción</option>
-                  <option>Medicamento 1</option>
-                  <option>Medicamento 2</option>
-                  <option>Medicamento 3</option>
+                <select v-model="medicamento">
+                  <option value="opcion" selected>Seleccione una opción</option>
+                  <option value="medicamento1">Medicamento 1</option>
+                  <option value="medicamento2">Medicamento 2</option>
+                  <option value="medicamento3">Medicamento 3</option>
                 </select>
               </div>
               <div class="icon is-small is-left">
@@ -82,31 +82,23 @@
           <div class="field">
             <label style="opacity: 0">Empty</label>
             <div class="control">
-              <button class="button is-primary is-outlined is-fullwidth">
+              <button class="button is-primary is-outlined is-fullwidth" @click="addMedicamento">
                 <span class="icon mr-1"> <i class="fa fa-plus"></i> </span>Agregar
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Tabla de medicamentos seleccionados -->
+        <!-- Tabla de medicamentos seleccionados
         <div class="column is-12">
-          <vue-good-table
-            :columns="[]"
-            :rows="[]"
-            :sort-options="{
-              enabled: true
-            }"
-          >
-            <template #emptystate>No se ha agregado ningún medicamento</template>
-          </vue-good-table>
-        </div>
+          <CustomTable :cols="[]" :rows="[]" />
+        </div> -->
 
         <div class="column is-12">
           <div class="field">
             <label class="has-text-grey has-text-weight-light">Comentarios</label>
             <div class="control">
-              <textarea class="textarea" />
+              <textarea class="textarea" v-model="order.comentarios" />
             </div>
           </div>
         </div>
@@ -114,12 +106,15 @@
           <div class="field">
             <label class="has-text-grey has-text-weight-light">Firma del doctor</label>
             <div class="control">
-              <input class="input" type="text" />
+              <input class="input" type="text" v-model="order.doctorSignature" />
             </div>
           </div>
         </div>
         <div class="column is-12 mt-6">
-          <button class="button is-primary is-fullwidth">Guardar</button>
+          <button class="button is-primary is-fullwidth" @click="handleSubmit">Guardar</button>
+        </div>
+        <div class="notification is-danger mt-4 error" v-if="error">
+          {{ 'Todos los campos deben de estar llenos' }}
         </div>
       </div>
     </div>
@@ -130,18 +125,55 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
+import { defineComponent, computed, ref } from 'vue'
+import CustomTable from '../shared/CustomTable.vue'
+import validationOrdersForm from '../../helpers/validationOrdersForm'
+import type MedicalOrder from '@/interfaces/MedicalOrder'
 
 export default defineComponent({
   name: 'MedicalOrderModal',
+  components: { CustomTable },
   props: {
     isOpen: { type: Boolean, required: true }
   },
-  emits: ['hide'],
+  emits: ['hide', 'save'],
   setup(props, { emit }) {
     const isModalOpen = computed(() => props.isOpen)
+    let medicamento = ref('')
+    let error = ref(false)
 
-    return { isModalOpen, emit }
+    const order = ref<MedicalOrder>({
+      name: '',
+      lastName: '',
+      idNumber: '',
+      eps: '',
+      medicines: [],
+      doctorSignature: '',
+      comentarios: ''
+    })
+
+    // Add medicamento
+    const addMedicamento = () => {
+      if (medicamento.value !== 'opcion') order.value.medicines.push(medicamento.value)
+      console.log(order.value.medicines)
+    }
+
+    // Hacer validaciones basicas
+    const handleSubmit = async () => {
+      const isValid = validationOrdersForm(order.value)
+      if (isValid) {
+        order.value.createdAt = new Date().toISOString()
+        emit('save', JSON.stringify(order.value))
+        emit('hide')
+      } else {
+        error.value = true
+        setTimeout(() => {
+          error.value = false
+        }, 2000)
+      }
+    }
+
+    return { isModalOpen, emit, order, medicamento, addMedicamento, handleSubmit, error }
   }
 })
 </script>
@@ -163,16 +195,23 @@ export default defineComponent({
   background-color: white;
   height: 830px;
   width: 1200px;
-  margin-top: 10%;
+  margin-top: 2%;
+  overflow-y: auto;
   padding: 40px 0;
   border-radius: 10px;
 }
 .close {
-  margin: 10.5% 0 0 -25px;
+  margin: 3% 0 0 -60px;
   cursor: pointer;
 }
 
 .is-bordered {
   border-bottom: 1px solid black;
+}
+
+.error {
+  text-align: center;
+  width: 100%;
+  font-size: 18px;
 }
 </style>
