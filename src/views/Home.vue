@@ -7,8 +7,9 @@ import type MedicalOrderSimple from '../interfaces/MedicalOrderSimple'
 import headerTableOrders from '@/helpers/headerTableOrders'
 import type MedicalOrder from '@/interfaces/MedicalOrder'
 import type Medicine from '../interfaces/Medicine'
+import MedicalOrderModalEdit from '@/components/medical-orders/MedicalOrderModalEdit.vue'
 
-const { getCollection, addDocument, deleteDocument } = useFirestore()
+const { getCollection, addDocument, deleteDocument, getData, getIdDocument, updateData } = useFirestore()
 const colums = headerTableOrders()
 const nameDelete = ref<string>('')
 const rows = ref<MedicalOrderSimple[]>([])
@@ -19,6 +20,10 @@ const range = ref({
 })
 const isModalOpen = ref(false)
 let errorDelate = ref(false)
+const idEdit = ref('')
+const dataEdit = ref<MedicalOrder[]>([])
+let state = ref(false)
+let isModalEdit = ref(false)
 
 const getRecords = async () => {
   const response: MedicalOrder[] = await getCollection('Medical-Orders')
@@ -55,9 +60,30 @@ const eliminar = async () => {
   }
 }
 
+const handleUpdate = async (document: string, id: string) => {
+  const response = await updateData('Medical-Orders', 'MedicalOrders', id, JSON.parse(document) as Medicine )
+  nameDelete.value = ''
+  state.value = false
+  dataEdit.value = []
+  getRecords()
+}
+
 const handleSubmit = async (document: string) => {
   const response = await addDocument('Medical-Orders', JSON.parse(document) as MedicalOrder)
   getRecords()
+}
+
+const editarOpen = async () => {
+  idEdit.value = await getIdDocument('Medical-Orders', 'MedicalOrders', nameDelete.value)
+  const editInfo = await getData('Medical-Orders', 'MedicalOrders', nameDelete.value)
+  dataEdit.value.push(editInfo)
+  isModalEdit.value = true
+  state.value = true
+}
+
+const closeEdit = () => {
+  isModalEdit.value = false
+  state.value = false
 }
 
 getRecords()
@@ -104,7 +130,10 @@ getRecordsMedines()
             v-model="nameDelete"
           />
         </div>
-        <button class="button is-danger mr-4 ml-4" @click="eliminar">
+        <button class="button is-warning mr-4 ml-4" @click="editarOpen">
+          <span class="icon mr-1"> <i class="fa fa-plus"></i> </span> Editar
+        </button>
+        <button class="button is-danger mr-4" @click="eliminar">
           <span class="icon mr-1"> <i class="fa fa-plus"></i> </span> Eliminar
         </button>
         <button class="button is-primary" @click="isModalOpen = true">
@@ -123,6 +152,7 @@ getRecordsMedines()
       @hide="isModalOpen = false"
       @save="handleSubmit"
     />
+    <MedicalOrderModalEdit :medicines="medicines" :is-open="isModalEdit" :id="idEdit" :data="dataEdit" :state="state" @update="handleUpdate" @close="closeEdit" @state-of="state = false"/>
   </div>
 </template>
 
