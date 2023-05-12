@@ -58,10 +58,9 @@
             <div class="control has-icons-left">
               <div class="select is-fullwidth">
                 <select v-model="medicamento">
-                  <option value="opcion" selected>Seleccione una opción</option>
-                  <option value="medicamento1">Medicamento 1</option>
-                  <option value="medicamento2">Medicamento 2</option>
-                  <option value="medicamento3">Medicamento 3</option>
+                  <option :value="elm.name" v-for="(elm, index) in medicinas" :key="index" selected>
+                    {{ elm.name }}
+                  </option>
                 </select>
               </div>
               <div class="icon is-small is-left">
@@ -89,10 +88,18 @@
           </div>
         </div>
 
-        <!-- Tabla de medicamentos seleccionados
-        <div class="column is-12">
-          <CustomTable :cols="[]" :rows="[]" />
-        </div> -->
+        
+        <div class="card column">
+          <div class="card-content">
+            <div class="content">
+              <ul>
+                <li v-for="(elm, index) in order.medicines" :key="index">
+                  {{ elm }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
 
         <div class="column is-12">
           <div class="field">
@@ -118,29 +125,36 @@
         </div>
       </div>
     </div>
-    <div class="close" @click="() => emit('hide')">
+    <div class="close" @click="closeModal">
       <i class="fa fa-times"></i>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue'
+import { defineComponent, computed, ref, onUpdated } from 'vue'
 import CustomTable from '../shared/CustomTable.vue'
 import validationOrdersForm from '../../helpers/validationOrdersForm'
 import type MedicalOrder from '@/interfaces/MedicalOrder'
+import type Medicine from '../../interfaces/Medicine'
 
 export default defineComponent({
   name: 'MedicalOrderModal',
   components: { CustomTable },
   props: {
-    isOpen: { type: Boolean, required: true }
+    isOpen: { type: Boolean, required: true },
+    medicines: { type: Array<Medicine>, required: true }
   },
   emits: ['hide', 'save'],
   setup(props, { emit }) {
     const isModalOpen = computed(() => props.isOpen)
+    const medicinas = ref<Medicine[]>([])
     let medicamento = ref('')
     let error = ref(false)
+
+    const llenarSelect = () => {
+      medicinas.value = props.medicines
+    }
 
     const order = ref<MedicalOrder>({
       name: '',
@@ -158,13 +172,34 @@ export default defineComponent({
       console.log(order.value.medicines)
     }
 
-    // Hacer validaciones basicas
+    const closeModal = () => {
+      emit('hide')
+      order.value = {
+          name: '',
+          lastName: '',
+          idNumber: '',
+          eps: '',
+          medicines: [],
+          doctorSignature: '',
+          comentarios: ''
+        }
+    }
+    
     const handleSubmit = async () => {
       const isValid = validationOrdersForm(order.value)
       if (isValid) {
         order.value.createdAt = new Date().toISOString()
         emit('save', JSON.stringify(order.value))
         emit('hide')
+        order.value = {
+          name: '',
+          lastName: '',
+          idNumber: '',
+          eps: '',
+          medicines: [],
+          doctorSignature: '',
+          comentarios: ''
+        }
       } else {
         error.value = true
         setTimeout(() => {
@@ -173,7 +208,11 @@ export default defineComponent({
       }
     }
 
-    return { isModalOpen, emit, order, medicamento, addMedicamento, handleSubmit, error }
+    onUpdated(() => {
+      llenarSelect()
+    })
+
+    return { isModalOpen, emit, order, medicamento, addMedicamento, handleSubmit, error, medicinas, closeModal }
   }
 })
 </script>

@@ -5,11 +5,13 @@ import CustomTable from '@/components/shared/CustomTable.vue'
 import MedicalOrderModal from '@/components/medical-orders/MedicalOrderModal.vue'
 import headerTableOrders from '@/helpers/headerTableOrders'
 import type MedicalOrder from '@/interfaces/MedicalOrder'
+import type Medicine from '../interfaces/Medicine'
 
 const { getCollection, addDocument, deleteDocument } = useFirestore()
 const colums = headerTableOrders();
 const nameDelete = ref<string>('')
 const rows = ref<MedicalOrder[]>([])
+const medicines = ref<Medicine[]>([])
 const range = ref({
   start: null,
   end: null
@@ -17,9 +19,15 @@ const range = ref({
 const isModalOpen = ref(false)
 let errorDelate = ref(false)
 
+
 const getRecords = async () => {
   const response: MedicalOrder[] = await getCollection('Medical-Orders')
   rows.value = response
+}
+
+const getRecordsMedines = async () => {
+  const response: Medicine[] = await getCollection('medicines')
+  medicines.value = response
 }
 
 const eliminar = async () => {
@@ -41,7 +49,7 @@ const handleSubmit = async (document: string) => {
 }
 
 getRecords()
-
+getRecordsMedines()
 </script>
 
 <template>
@@ -97,7 +105,7 @@ getRecords()
       <CustomTable :cols="colums" :rows="rows" />
     </div>
 
-    <MedicalOrderModal :is-open="isModalOpen" @hide="isModalOpen = false" @save="handleSubmit" />
+    <MedicalOrderModal :medicines="medicines" :is-open="isModalOpen" @hide="isModalOpen = false" @save="handleSubmit" />
   </div>
 </template>
 
