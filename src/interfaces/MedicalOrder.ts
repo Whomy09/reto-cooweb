@@ -1,5 +1,3 @@
-import type Medicine from "./Medicine"
-
 interface MedicalOrder {
   name: string,
   lastName: string,

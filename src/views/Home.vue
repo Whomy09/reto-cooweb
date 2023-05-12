@@ -3,14 +3,15 @@ import { useFirestore } from '@/composables/useFirestore'
 import { ref } from 'vue'
 import CustomTable from '@/components/shared/CustomTable.vue'
 import MedicalOrderModal from '@/components/medical-orders/MedicalOrderModal.vue'
+import type MedicalOrderSimple from '../interfaces/MedicalOrderSimple'
 import headerTableOrders from '@/helpers/headerTableOrders'
 import type MedicalOrder from '@/interfaces/MedicalOrder'
 import type Medicine from '../interfaces/Medicine'
 
 const { getCollection, addDocument, deleteDocument } = useFirestore()
-const colums = headerTableOrders();
+const colums = headerTableOrders()
 const nameDelete = ref<string>('')
-const rows = ref<MedicalOrder[]>([])
+const rows = ref<MedicalOrderSimple[]>([])
 const medicines = ref<Medicine[]>([])
 const range = ref({
   start: null,
@@ -19,10 +20,21 @@ const range = ref({
 const isModalOpen = ref(false)
 let errorDelate = ref(false)
 
-
 const getRecords = async () => {
   const response: MedicalOrder[] = await getCollection('Medical-Orders')
-  rows.value = response
+  let newInfo = ref<MedicalOrderSimple[]>([])
+  response.forEach((e) => {
+    newInfo.value.push({
+      name: e.name,
+      lastName: e.lastName,
+      idNumber: e.idNumber,
+      eps: e.eps,
+      medicines: e.medicines.join('-').toUpperCase(),
+      doctorSignature: e.doctorSignature,
+      comentarios: e.comentarios
+    })
+  })
+  rows.value = newInfo.value
 }
 
 const getRecordsMedines = async () => {
@@ -105,7 +117,12 @@ getRecordsMedines()
       <CustomTable :cols="colums" :rows="rows" />
     </div>
 
-    <MedicalOrderModal :medicines="medicines" :is-open="isModalOpen" @hide="isModalOpen = false" @save="handleSubmit" />
+    <MedicalOrderModal
+      :medicines="medicines"
+      :is-open="isModalOpen"
+      @hide="isModalOpen = false"
+      @save="handleSubmit"
+    />
   </div>
 </template>
 

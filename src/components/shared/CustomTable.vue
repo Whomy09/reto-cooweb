@@ -3,12 +3,13 @@ import { defineComponent, type PropType, computed } from 'vue'
 import type BaseColumn from '../../interfaces/BaseColumn'
 import type Medicine from '../../interfaces/Medicine'
 import type MedicalOrder from '../../interfaces/MedicalOrder'
+import type MedicalOrderSimple from '@/interfaces/MedicalOrderSimple'
 
 export default defineComponent({
   name: 'CustomTable',
   props: {
     cols: { type: Array as PropType<BaseColumn[]>, required: true },
-    rows: { type: Array as PropType<MedicalOrder[] | Medicine[]>, required: true },
+    rows: { type: Array as PropType<MedicalOrder[] | Medicine[] | MedicalOrderSimple[]>, required: true },
     emptyMessage: { type: String, required: false }
   },
   setup(props) {
