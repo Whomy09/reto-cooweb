@@ -49,10 +49,62 @@ export const useFirestore = () => {
     }
   }
 
+  const getIdDocument = async (path: string, type: 'Medicine' | 'MedicalOrders', name: string) => {
+    const reference = getReference('collection', path)
+
+    if (type === 'Medicine') {
+      const querySnapshot = await reference.where('name', '==', name).get()
+
+      if (!querySnapshot.empty) {
+        const docSnapshot = querySnapshot.docs[0]
+
+        return docSnapshot.id
+      }
+    } else {
+      const querySnapshot = await reference.where('idNumber', '==', name).get()
+
+      if (!querySnapshot.empty) {
+        const docSnapshot = querySnapshot.docs[0]
+
+        return docSnapshot.id
+      }
+    }
+  }
+
+  const getData = async (path: string, type: 'Medicine' | 'MedicalOrders', name: string) => {
+    const reference = getReference('collection', path)
+
+    if (type === 'Medicine') {
+      const querySnapshot = await reference.where('name', '==', name).get()
+
+      if (!querySnapshot.empty) {
+        const docSnapshot = querySnapshot.docs[0]
+
+        return docSnapshot.data()
+      }
+    } else {
+      const querySnapshot = await reference.where('idNumber', '==', name).get()
+
+      if (!querySnapshot.empty) {
+        const docSnapshot = querySnapshot.docs[0]
+
+        return docSnapshot.data()
+      }
+    }
+  }
+
+  const updateData = async (path: string, type: 'Medicine' | 'MedicalOrders', id: string, newData: any) => {
+    const reference = getReference('collection', path)
+    await reference.doc(id).update(newData)
+  }
+
   return {
     getReference,
     getCollection,
     addDocument,
-    deleteDocument
+    deleteDocument,
+    getIdDocument,
+    getData,
+    updateData
   }
 }
