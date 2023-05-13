@@ -25,6 +25,7 @@ const getRecords = async () => {
   rows.value = response
 }
 
+// Con los objetos de medicines se usa el nombre de la medicina para eliminar
 const eliminar = async () => {
   if (nameDelete.value) {
     const response = await deleteDocument('medicines', 'Medicine', nameDelete.value)
@@ -51,6 +52,7 @@ const closeEdit = () => {
   state.value = false
 }
 
+// Con los objetos de medicines se usa el nombre de la medicina para actualizar
 const handleUpdate = async (document: string, id: string) => {
   const response = await updateData('medicines', 'Medicine', id, JSON.parse(document) as Medicine )
   nameDelete.value = ''

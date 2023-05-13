@@ -47,6 +47,7 @@ const getRecordsMedines = async () => {
   medicines.value = response
 }
 
+// Los medical order se usa la id del paciente para eliminar
 const eliminar = async () => {
   if (nameDelete.value) {
     const response = await deleteDocument('Medical-Orders', 'MedicalOrders', nameDelete.value)
@@ -60,6 +61,7 @@ const eliminar = async () => {
   }
 }
 
+// Los medical order se usa la id del paciente para actualizar
 const handleUpdate = async (document: string, id: string) => {
   const response = await updateData('Medical-Orders', 'MedicalOrders', id, JSON.parse(document) as Medicine )
   nameDelete.value = ''
